@@ -1,7 +1,5 @@
 # VI-SLAM
 
-@ Kunmao Li
-
 **Project Description**
 This report presents the panorama of the design concerning visual-inertial simultaneous localization and mapping(VI-SLAM). Utilizing synchronized measurements from an IMU, a stereo camera, the intrinsic camera calibration and the extrinsic calibration between the two sensors specifying the transformation from the IMU to the left camera frame, this design aims to realize the goals including IMU localization via EKF prediction, landmark mapping via EKF update and ultimately the completion of Visual-Inertial SLAM. 
 
