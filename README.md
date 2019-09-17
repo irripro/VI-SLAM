@@ -6,14 +6,14 @@ This report presents the panorama of the design concerning visual-inertial simul
 * [Folder Organization](#Folder-Organization)
 * [Code Organization](#Code-Organization)
 * [Dataset](#Dataset)
-  * [Training Sets 20 and 21](#Training-Sets-20-and-21)
-  * [Testing Set 23](#Testing-Set-23)
+  * [Training Sets 27 and 42](#Training-Sets-27-and-42)
+  * [Testing Set 20](#Testing-Set-20)
   * [Data Extracted](#Data-Extracted)
 * [Training Procedure](#Training-Procedure)
 * [Files Genearated](#Files-Genearated)
 * [Training Performance](#Training-Performance)
-  * [Localization](#Localization)
-  * [SLAM](#SLAM)
+  * [EKF-Localization](#EKF-Localization)
+  * [EKF-SLAM](#EKF-SLAM)
 
 ## Prerequisites
 - cv2
@@ -107,5 +107,7 @@ Transform the plots to video in form of gif/avi. Increase the number of fps to i
 3. data file with extension of <b>.pickle</b>: store attributes you want(You may edit function in the get_params() within the class)
 </pre>
 
-## 
+## Training Performance
+ ### EKF-Localization
+ ### EKF-SLAM
 
