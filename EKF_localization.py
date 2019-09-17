@@ -5,6 +5,7 @@ import pdb
 from load_data import *
 from tqdm import trange
 import pickle
+import os
 import matplotlib.animation as animation
 from matplotlib.animation import PillowWriter
 
@@ -13,8 +14,10 @@ from matplotlib.animation import PillowWriter
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 # available street number : 27 & 42(train set) 20(test set)
-street = 20
+street = 42
 filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/{:04d}.npz".format(street)
+if street not in [20, 27, 42]:
+    raise Exception('Invalid Street Number')
 data_set = load_data(filename)
 
 #---------------- color map setting for trainsets and testset ----------------------------------# 
@@ -29,11 +32,12 @@ yaw_rate_ = data_set['rotational_velocity'][2,:] # yaw_rate
 #----------------------- animation and plots saving set ----------------------------------#
 display_animation = True # demonstrate EKF localization over time by animation
 save_animation = True
+plot_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/plots/localization"
 ani_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/animation"
 
 #----------------------------- EKF data saving set ----------------------------------# 
-save_data = True # whether to save data after completing localization
-save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData"
+save_data = False # whether to save data after completing localization
+save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData/localization_data"
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   EKF Variance Setting
@@ -291,7 +295,7 @@ class ekf_localization():
         py = np.array(fx[1, :] + xEst[1, 0]).flatten()
         return plt.plot(px, py, '--r')
 
-    def plot_trajectory_results(self,color_map,street,it,covariance_ellipse=True,):
+    def plot_trajectory_results(self,color_map,street,it,save_animation,fig_num, save_fig = False,covariance_ellipse = True):
         
         plt.cla()
         # observations
@@ -314,14 +318,22 @@ class ekf_localization():
         plt.axis('equal')
         plt.grid(True)
         plt.title(str(street)+' street: IMU Localization via EKF')
+        
+        if save_animation and save_fig:
+            main_folder = "{}/{}".format(plot_path, street)
+            if not os.path.exists(main_folder):
+                os.mkdir(main_folder)
+            plt.savefig("{}/{}.jpg".format(main_folder, fig_num))
+        
         '''
-        if flag:
-            plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
-        else:
-            plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
+        if save_animation and not it%5:
+            if p6:
+                ims.append([p1, p2, p3, p4, p5, p6])
+            else:
+                ims.append([p1, p2, p3, p4, p5])
         '''
         plt.pause(0.001)
-        return [p1, p2, p3, p4, p5, p6] if p6 else [p1, p2, p3, p4, p5]
+        
 
 
 
@@ -337,13 +349,11 @@ def main():
     if save_animation:
         ims = []
     fig = plt.figure()
+    fig_num = 0
 
     for i in trange(t.shape[1]):
         # the final index of iteration i 
         limit_len = t.shape[1]
-        
-        # sign of whether to save the plot
-        flag = 0
         
         # Ground Truth
         # since tau is difference between two time stamps, let the last tau keep the previous value
@@ -360,12 +370,10 @@ def main():
         EKF.activate_ekf_localization(v,yaw_rate,tau)
         
         if display_animation:
-            im = EKF.plot_trajectory_results(color_map,street,i,covariance_ellipse=True)
-            if save_animation:
-                if not i%5 or i == limit_len - 1:
-                    ims.append(im)
-    
-
+            save_fig = True if (not i % 50 or i == limit_len - 1) else False
+            EKF.plot_trajectory_results(color_map, street, i, save_animation, fig_num, save_fig, covariance_ellipse=True)
+            fig_num += 1
+    '''
     if save_animation: 
         print(len(ims))
         ani = animation.ArtistAnimation(fig, ims, interval = 100, blit=True,
@@ -373,13 +381,16 @@ def main():
 
         writer = PillowWriter(fps = 30)
         ani.save("{}/{}.gif".format(ani_path, street), writer = 'imagemagick')
-
+        with open("{0}/{1}_img".format(save_dir, street), "wb") as data:
+            pickle.dump((fig, ims), data)
+    '''
    
     if save_data == True:
         ekf_param_data = EKF.get_params(save_all=True)
-        print('...start saving data...')
-        with open("{0}/{1}".format(save_dir, street), 'wb') as ekf_data:
+        print("...start saving data...")
+        with open("{0}/ekf_localization_data_{1}".format(save_dir, street), 'wb') as ekf_data:
             pickle.dump(ekf_param_data, ekf_data)
+        print("...saving data done...")
     
     plt.show()
 

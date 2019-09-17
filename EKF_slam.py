@@ -12,6 +12,7 @@ from load_data import *
 from tqdm import trange
 import pickle
 from video_writer import video_slam
+import os
 
 from hw3_main import * # some global variables defined in the main file
 
@@ -346,7 +347,7 @@ class SLAM_EKF():
 		py = np.array(fx[1, :] + xEst[1, 0]).flatten()
 		return plt.plot(px, py, '--r')
 
-	def plot_slam_results(self,color_map,street,flag,it,plt_dir,save_extension,covariance_ellipse=True):
+	def plot_slam_results(self,color_map,street,flag,it,plt_dir,covariance_ellipse=True):
 
 		plt.cla()
 		
@@ -386,9 +387,10 @@ class SLAM_EKF():
 		plt.title(str(street)+' street: EKF SLAM')
 
 		if flag:
-			plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
-		else:
-			plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
+			main_folder = "{}/{}".format(plot_path, street)
+			if not os.path.exists(main_folder):
+				os.mkdir(main_folder)
+			plt.savefig("{}/{}.jpg".format(main_folder, it))
 
 		plt.axis('equal')
 		plt.grid(True)

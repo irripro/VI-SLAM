@@ -6,7 +6,7 @@ from EKF_slam import *
 
 # available street number : 27 & 42(train set) 20(test set)
 #---------------- dataset loading and extracting ----------------------------------# 
-street = 27
+street = 20
 filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/{:04d}.npz".format(street)
 data_set = load_data(filename)
 
@@ -23,7 +23,7 @@ color_map = {27:['palevioletred','Purple','darkslateblue'],
 
 #----------------------- animation and plots saving set ----------------------------#
 display_animation = True # demonstrate EKF localization over time by animation
-#plt_dir = '/Users/momolee/Documents/ECE 276A/hw/ECE276A_HW3/slam/plots_' # save path for plots over time saved
+plot_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/plots/slam" # save path for plots over time saved
 #save_extension = '.png'
 
 #----------------------- hardware and state setting --------------------------------#
@@ -36,8 +36,8 @@ pose_size = 3  # robot pose size [x,y,yaw]
 lm_pos_size = 2  # landmark position state size [x,y]
 
 #----------------------------- EKF data saving set ---------------------------------# 
-save_data = True # whether to save data after completing localization
-save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData/{:04d}.npz".format(street)
+save_data = False # whether to save data after completing localization
+save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData/slam_data/ekf_slam_data_{}".format(street)
 video_record = False
 
 
@@ -45,11 +45,11 @@ video_record = False
   EKF Variance Setting
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 # EKF state covariance
-Cx = np.diag([0.5, 0.5, np.deg2rad(30.0)])**2
+Cx = np.diag([0.5, 0.5, np.deg2rad(30.0)]) ** 2
 
 #  Simulation parameter
-Qsim = np.diag([0.2, np.deg2rad(1.0)])**2
-Rsim = np.diag([1.0, np.deg2rad(10.0)])**2
+Qsim = np.diag([0.2, np.deg2rad(1.0)]) ** 2
+Rsim = np.diag([1.0, np.deg2rad(10.0)]) ** 2
 
 
 def main():
@@ -72,12 +72,9 @@ def main():
 		EKF.activate_ekf_slam(v,yaw_rate,RFID,tau)
 		if display_animation:  # pragma: no cover
 			flag = 0
-			if i%5 ==0:
+			if not i%5 or i == t.shape[1]-1:
 				flag = 1
-				EKF.plot_slam_results(color_map,street,flag,i,plt_dir,save_extension,covariance_ellipse=True)
-			if i == (t.shape[1]-1):
-				flag = 1
-				EKF.plot_slam_results(color_map,street,flag,i,plt_dir,save_extension,covariance_ellipse=True)
+				EKF.plot_slam_results(color_map,street,flag,i,plot_path,covariance_ellipse=True)
 
 	if save_data == True:
 		ekf_slam_data = EKF.get_params(param_set=['pst_truth','pst_est'],save_all=True)
