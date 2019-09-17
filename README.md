@@ -27,6 +27,8 @@ This report presents the panorama of the design concerning visual-inertial simul
 - pickle
 - tqdm
 - scipy
+- video writer
+- transforms3d
 
 ## Folder Organization
 <pre>
@@ -109,5 +111,17 @@ Transform the plots to video in form of gif/avi. Increase the number of fps to i
 
 ## Training Performance
  ### EKF-Localization
+ #### Training Set 27
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/localization_27.gif)
+ #### Training Set 42
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/localization_42.gif)
+ #### Testing Set 20
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/localization_20.gif)
  ### EKF-SLAM
+ #### Training Set 27
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/slam_27.gif)
+ #### Training Set 42
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/slam_42.gif)
+ #### Testing Set 20
+ ![](https://github.com/kwanmolee/VI-SLAM/blob/master/animation/slam_20.gif)
 
