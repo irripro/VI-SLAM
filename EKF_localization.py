@@ -1,8 +1,3 @@
-'''
-@ author: Kunamo Li
-ECE 276A: HW3-EKF LOCALIZATION
-'''
-
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +5,8 @@ import pdb
 from load_data import *
 from tqdm import trange
 import pickle
-
+import matplotlib.animation as animation
+from matplotlib.animation import PillowWriter
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   Variable Setting
@@ -18,7 +14,7 @@ import pickle
 
 # available street number : 27 & 42(train set) 20(test set)
 street = 20
-filename = '/Users/momolee/Documents/ECE 276A/hw/ECE276A_HW3/starter_code/data/00'+str(street)+'.npz'
+filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/{:04d}.npz".format(street)
 data_set = load_data(filename)
 
 #---------------- color map setting for trainsets and testset ----------------------------------# 
@@ -32,12 +28,12 @@ yaw_rate_ = data_set['rotational_velocity'][2,:] # yaw_rate
 
 #----------------------- animation and plots saving set ----------------------------------#
 display_animation = True # demonstrate EKF localization over time by animation
-plt_dir = '/Users/momolee/Documents/ECE 276A/hw/ECE276A_HW3/plots_' # save path for plots over time saved
+save_animation = True
+ani_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/animation"
 
 #----------------------------- EKF data saving set ----------------------------------# 
 save_data = True # whether to save data after completing localization
-save_dir = '/Users/momolee/Documents/ECE 276A/hw/ECE276A_HW3/localization_data/ekf_localization_data_'+str(street) # save path
-save_extension = '.jpg'
+save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData"
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   EKF Variance Setting
@@ -180,7 +176,7 @@ class ekf_localization():
         return F.dot(x) + B.dot(self.u_noise)
 
     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    IV. Observation Model and Jacobian
+    IV. Observation Model and Jacobianii
     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
     def observation(self):
@@ -295,7 +291,7 @@ class ekf_localization():
         py = np.array(fx[1, :] + xEst[1, 0]).flatten()
         return plt.plot(px, py, '--r')
 
-    def plot_trajectory_results(self,color_map,street,flag,it,plt_dir,save_extension,covariance_ellipse=True,):
+    def plot_trajectory_results(self,color_map,street,it,covariance_ellipse=True,):
         
         plt.cla()
         # observations
@@ -318,11 +314,14 @@ class ekf_localization():
         plt.axis('equal')
         plt.grid(True)
         plt.title(str(street)+' street: IMU Localization via EKF')
+        '''
         if flag:
             plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
         else:
             plt.savefig(plt_dir+str(street)+'/'+str(it)+save_extension)
+        '''
         plt.pause(0.001)
+        return [p1, p2, p3, p4, p5, p6] if p6 else [p1, p2, p3, p4, p5]
 
 
 
@@ -335,6 +334,10 @@ def main():
     # trange can demonstrate the iteration progress
     # iterations according to time stamps
     
+    if save_animation:
+        ims = []
+    fig = plt.figure()
+
     for i in trange(t.shape[1]):
         # the final index of iteration i 
         limit_len = t.shape[1]
@@ -355,19 +358,27 @@ def main():
         yaw_rate = yaw_rate_[i]
         
         EKF.activate_ekf_localization(v,yaw_rate,tau)
-
+        
         if display_animation:
-            if i%5 == 0:
-                flag = 1
-            if i == limit_len - 1:
-                flag = 1
-            EKF.plot_trajectory_results(color_map,street,flag,i,plt_dir,save_extension,covariance_ellipse=True)
+            im = EKF.plot_trajectory_results(color_map,street,i,covariance_ellipse=True)
+            if save_animation:
+                if not i%5 or i == limit_len - 1:
+                    ims.append(im)
     
+
+    if save_animation: 
+        print(len(ims))
+        ani = animation.ArtistAnimation(fig, ims, interval = 100, blit=True,
+                                    repeat_delay = 8)
+
+        writer = PillowWriter(fps = 30)
+        ani.save("{}/{}.gif".format(ani_path, street), writer = 'imagemagick')
+
    
     if save_data == True:
         ekf_param_data = EKF.get_params(save_all=True)
         print('...start saving data...')
-        with open(save_dir, 'wb') as ekf_data:
+        with open("{0}/{1}".format(save_dir, street), 'wb') as ekf_data:
             pickle.dump(ekf_param_data, ekf_data)
     
     plt.show()

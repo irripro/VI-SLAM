@@ -1,7 +1,3 @@
-'''
-@ Kunamo Li
-ECE 276A: HW3-EKF SLAM
-'''
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 <EKF_Simultaneous Localization and Mapping>
 	1. EKF localization
