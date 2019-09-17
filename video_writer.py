@@ -7,8 +7,8 @@ import imageio
 
 ######################### change your own reading path and saving path ##############################################
 extension = ".jpg"
-sup_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/plots"
-ani_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/animation"
+sup_path = "plots"
+ani_path = "animation"
 images = []
 kargs = {"duration": 0.5 }
 

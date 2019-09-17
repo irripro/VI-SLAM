@@ -14,8 +14,8 @@ from matplotlib.animation import PillowWriter
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 # available street number : 27 & 42(train set) 20(test set)
-street = 42
-filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/{:04d}.npz".format(street)
+street = 20
+filename = "data/{:04d}.npz".format(street)
 if street not in [20, 27, 42]:
     raise Exception('Invalid Street Number')
 data_set = load_data(filename)
@@ -32,12 +32,12 @@ yaw_rate_ = data_set['rotational_velocity'][2,:] # yaw_rate
 #----------------------- animation and plots saving set ----------------------------------#
 display_animation = True # demonstrate EKF localization over time by animation
 save_animation = True
-plot_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/plots/localization"
-ani_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/animation"
+plot_path = "plots/localization"
+ani_path = "animation"
 
 #----------------------------- EKF data saving set ----------------------------------# 
 save_data = False # whether to save data after completing localization
-save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData/localization_data"
+save_dir = "saveData/localization_data"
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   EKF Variance Setting
@@ -318,12 +318,13 @@ class ekf_localization():
         plt.axis('equal')
         plt.grid(True)
         plt.title(str(street)+' street: IMU Localization via EKF')
+        plt.tight_layout()
         
         if save_animation and save_fig:
             main_folder = "{}/{}".format(plot_path, street)
             if not os.path.exists(main_folder):
                 os.mkdir(main_folder)
-            plt.savefig("{}/{}.jpg".format(main_folder, fig_num))
+            plt.savefig("{}/{}.png".format(main_folder, fig_num))
         
         '''
         if save_animation and not it%5:

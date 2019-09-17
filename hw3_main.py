@@ -7,7 +7,7 @@ from EKF_slam import *
 # available street number : 27 & 42(train set) 20(test set)
 #---------------- dataset loading and extracting ----------------------------------# 
 street = 20
-filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/{:04d}.npz".format(street)
+filename = "data/{:04d}.npz".format(street)
 data_set = load_data(filename)
 
 t = data_set['t'] # time_stamps
@@ -23,7 +23,7 @@ color_map = {27:['palevioletred','Purple','darkslateblue'],
 
 #----------------------- animation and plots saving set ----------------------------#
 display_animation = True # demonstrate EKF localization over time by animation
-plot_path = "/Users/momolee/Documents/PROJECTS/VI-SLAM/plots/slam" # save path for plots over time saved
+plot_path = "plots/slam" # save path for plots over time saved
 #save_extension = '.png'
 
 #----------------------- hardware and state setting --------------------------------#
@@ -37,7 +37,7 @@ lm_pos_size = 2  # landmark position state size [x,y]
 
 #----------------------------- EKF data saving set ---------------------------------# 
 save_data = False # whether to save data after completing localization
-save_dir = "/Users/momolee/Documents/PROJECTS/VI-SLAM/saveData/slam_data/ekf_slam_data_{}".format(street)
+save_dir = "saveData/slam_data/ekf_slam_data_{}".format(street)
 video_record = False
 
 

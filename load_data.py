@@ -61,7 +61,7 @@ def load_data(file_name):
   return data_set
 
 street = 42 
-filename = "/Users/momolee/Documents/PROJECTS/VI-SLAM/data/00{}.npz".format(street)
+filename = "data/00{}.npz".format(street)
 data_set = load_data(filename)
 
 def data_review(data_set,print_data=False, print_data_shape=True):

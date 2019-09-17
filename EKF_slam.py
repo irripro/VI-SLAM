@@ -390,7 +390,7 @@ class SLAM_EKF():
 			main_folder = "{}/{}".format(plot_path, street)
 			if not os.path.exists(main_folder):
 				os.mkdir(main_folder)
-			plt.savefig("{}/{}.jpg".format(main_folder, it))
+			plt.savefig("{}/{}.png".format(main_folder, it))
 
 		plt.axis('equal')
 		plt.grid(True)
